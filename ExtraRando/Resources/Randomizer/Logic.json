@@ -17,7 +17,7 @@
   },
   {
     "name": "Lower_Godhome-Hot_Spring",
-    "logic": "GG_Atrium + SWIM"
+    "logic": "GG_Atrium + (SWIM | (PRECISEMOVEMENT | (NOSWIM ? FALSE)) + LEFTCLAW + RIGHTSUPERDASH)"
   },
   {
     "name": "Upper_Godhome-Hot_Spring",

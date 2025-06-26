@@ -20,7 +20,7 @@ public class SplitVengefulSpiritLocation : AutoLocation
     public void OnEnterScene(Scene scene)
     {
         if (!Placement.AllObtained() && Placement.Items.All(x => x.WasEverObtained()))
-            ItemHelper.SpawnShiny(new(19.41f, 8.41f), Placement);
+            ItemHelper.SpawnShiny(new(19.41f, 11.55f), Placement);
     }
 
     #endregion
