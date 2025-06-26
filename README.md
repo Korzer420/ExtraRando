@@ -78,6 +78,7 @@ These built-in hints are:
 - Shopkeeper Key hint from Sly in the shop if you talk to him from the right multiple times.
 - Mark of Pride hint from a pacified Mantis Warrior dream nail dialogue.
 - White Fragment hints from the White Lady.
+- Grub hints from Grubfather (a tablet is added on the left side)
 
 **In case of a duplicate, these hints are picked based on what appears first. So the hinted item may not be the intented progression version!**
 
