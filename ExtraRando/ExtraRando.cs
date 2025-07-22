@@ -1,4 +1,5 @@
 using ExtraRando.ModInterop.ItemChangerInterop;
+using ExtraRando.ModInterop.ItemChangerInterop.Modules;
 using ExtraRando.ModInterop.Randomizer;
 using ExtraRando.SaveManagement;
 using Modding;
@@ -32,7 +33,8 @@ public class ExtraRando : Mod, IGlobalSettings<GlobalSaveSettings>
     public override void Initialize()
     {
         ItemManager.Initialize();
-        RandoInterop.Initialize();        
+        RandoInterop.Initialize();
+        VictoryModule.LoadConditions();
     }
 
     public void OnLoadGlobal(GlobalSaveSettings saveSettings)

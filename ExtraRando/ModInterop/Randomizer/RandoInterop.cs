@@ -1,3 +1,4 @@
+using ExtraRando.Data;
 using ExtraRando.ModInterop.ItemChangerInterop;
 using ExtraRando.ModInterop.ItemChangerInterop.Modules;
 using ItemChanger;
@@ -952,6 +953,26 @@ public static class RandoInterop
         }
         if (ExtraRando.Instance.Settings.UseKeyring)
             builder.AddItem(new SingleItem(ItemManager.Key_Ring, new(builder.GetTerm("SIMPLE"), 4)));
+        if (ExtraRando.Instance.Settings.UseVictoryConditions)
+        {
+            List<string> conditions = [];
+            foreach (var usedCondition in ExtraRando.Instance.Settings.VictoryConditions.Where(x => x.Value > 0))
+            {
+                IVictoryCondition condition = VictoryModule.AvailableConditions.First(x => x.GetType().Name == usedCondition.Key);
+                // We need the extra "IsTerm" check since calling GetOrAdd on a type mismatch causes an exception
+                // For example "DREAMER" is a signed byte term, but we add all as int for simplicity, which causes an issue.
+                if (!builder.IsTerm(condition.GetLogicTerm()))
+                    builder.GetOrAddTerm(condition.GetLogicTerm(), TermType.Int);
+                conditions.Add($"{condition.GetLogicTerm()}>{usedCondition.Value - 1}");
+            }
+            if (conditions.Count > 0)
+            {
+                string logic = ExtraRando.Instance.Settings.ConditionHandling == Enums.VictoryConditionHandling.Any
+                    ? conditions.Aggregate((x, y) => $"{x} | {y}")
+                    : conditions.Aggregate((x, y) => $"{x} + {y}");
+                builder.DoLogicEdit(new("Opened_Black_Egg_Temple", $"Room_temple[left1] + ({logic})"));
+            }   
+        }
     }
 
     private static void CheckForNoLogic(GenerationSettings settings, LogicManagerBuilder builder)
@@ -984,6 +1005,11 @@ public static class RandoInterop
             hashModifier += 5;
         if (ExtraRando.Instance.Settings.AddFixedHints)
             hashModifier += 51;
+
+        if (ExtraRando.Instance.Settings.UseVictoryConditions)
+        { 
+            hashModifier += 152;
+        }
         return hashModifier;
     }
 
@@ -1015,12 +1041,25 @@ public static class RandoInterop
 
     private static void RandoController_OnExportCompleted(RandoController obj)
     {
-        if (!ExtraRando.Instance.Settings.Enabled || !ExtraRando.Instance.Settings.AddFixedHints)
+        if (!ExtraRando.Instance.Settings.Enabled)
             return;
-        if (ItemChangerMod.Modules.Get<HintModule>() == null)
+        if (ExtraRando.Instance.Settings.AddFixedHints && ItemChangerMod.Modules.Get<HintModule>() == null)
         {
             HintModule hintModule = ItemChangerMod.Modules.GetOrAdd<HintModule>();
             hintModule.AddHints();
+        }
+        if (ExtraRando.Instance.Settings.UseVictoryConditions)
+        {
+            VictoryModule module = ItemChangerMod.Modules.GetOrAdd<VictoryModule>();
+            module.CombineCondition = ExtraRando.Instance.Settings.ConditionHandling == Enums.VictoryConditionHandling.All;
+            module.WarpToCredits = ExtraRando.Instance.Settings.WarpToCredits;
+            foreach (var usedCondition in ExtraRando.Instance.Settings.VictoryConditions.Where(x => x.Value > 0))
+            {
+                LogHelper.Write<ExtraRando>(VictoryModule.AvailableConditions.Select(x => x.GetType().Name).Aggregate((x, y) => x + y));
+                Data.IVictoryCondition condition = VictoryModule.AvailableConditions.FirstOrDefault(x => x.GetType().Name == usedCondition.Key);
+                if (condition != null)
+                    module.ActiveConditions.Add(condition);
+            }
         }
     }
 
@@ -1039,6 +1078,7 @@ public static class RandoInterop
         SettingsLog.AfterLogSettings += WriteSettings;
         RandoController.OnCalculateHash += RandoController_OnCalculateHash;
         RandoController.OnExportCompleted += RandoController_OnExportCompleted;
+
 
         if (ModHooks.GetMod("RandoSettingsManager") is Mod)
             HookRandoSettingsManager();

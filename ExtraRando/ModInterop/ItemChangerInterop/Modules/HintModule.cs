@@ -1,18 +1,16 @@
 ﻿using ItemChanger;
 using ItemChanger.Internal;
 using ItemChanger.Modules;
-using ItemChanger.Tags;
+using ItemChanger.Util;
 using KorzUtils.Helper;
 using Modding;
 using RandomizerMod.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static BossStatueCompletionStates;
 using System.Text;
-using UnityEngine.SceneManagement;
-using ItemChanger.Util;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace ExtraRando.ModInterop.ItemChangerInterop.Modules;
 

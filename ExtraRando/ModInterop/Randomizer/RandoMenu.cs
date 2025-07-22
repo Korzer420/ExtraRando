@@ -1,8 +1,14 @@
+using ExtraRando.Data;
+using ExtraRando.Enums;
+using ExtraRando.ModInterop.ItemChangerInterop.Modules;
+using KorzUtils.Helper;
 using MenuChanger;
 using MenuChanger.Extensions;
 using MenuChanger.MenuElements;
 using MenuChanger.MenuPanels;
+using Modding;
 using RandomizerMod.Menu;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ExtraRando.ModInterop.Randomizer;
@@ -15,6 +21,8 @@ internal class RandoMenu
     private MenuPage _connectionPage;
     private MenuElementFactory<RandoSettings> _elementFactory;
     private GridItemPanel _hintPanel;
+
+    private MenuPage _victoryPage;
 
     #endregion
 
@@ -31,21 +39,21 @@ internal class RandoMenu
         // Generate pages and setting elements
         _connectionPage = new("Extra Rando", previousPage);
         _elementFactory = new(_connectionPage, ExtraRando.Instance.Settings);
-        _hintPanel = new(_connectionPage, new(0, -275), 4, 0, 300, false, new IMenuElement[] { 
+        _hintPanel = new(_connectionPage, new(0, -275), 4, 0, 300, false, [ 
             _elementFactory.ElementLookup["JunkItemHints"],
             _elementFactory.ElementLookup["PotentialItemHints"],
             _elementFactory.ElementLookup["UsefulItemHints"],
-            _elementFactory.ElementLookup["RandomLocationHints"]});
+            _elementFactory.ElementLookup["RandomLocationHints"]]);
 
-        VerticalItemPanel leftPanel = new(_connectionPage, new(0, 0), 80f, false, new IMenuElement[] {
+        VerticalItemPanel leftPanel = new(_connectionPage, new(0, 0), 80f, false, [
             _elementFactory.ElementLookup["RandomizeHotSprings"],
             _elementFactory.ElementLookup["RandomizeColoAccess"],
             _elementFactory.ElementLookup["RandomizePantheonAccess"],
             _elementFactory.ElementLookup["RandomizeButt"],
             _elementFactory.ElementLookup["RandomizeAwfulLocations"],
             _elementFactory.ElementLookup["EnforceJunkLocations"]
-        });
-        VerticalItemPanel rightPanel = new(_connectionPage, new(0, 0), 80f, false, new IMenuElement[] {
+        ]);
+        VerticalItemPanel rightPanel = new(_connectionPage, new(0, 0), 80f, false, [
             _elementFactory.ElementLookup["SplitFireball"],
             _elementFactory.ElementLookup["SplitShadeCloak"],
             _elementFactory.ElementLookup["UseKeyring"],
@@ -53,10 +61,10 @@ internal class RandoMenu
             _elementFactory.ElementLookup["BlockEarlyGameStags"],
             _elementFactory.ElementLookup["AddFixedHints"],
             _elementFactory.ElementLookup["AddHintMarkers"]
-        });
+        ]);
         
-        GridItemPanel optionPanels = new(_connectionPage, new(0f, 150), 2, 100f, 600f, false, new IMenuElement[] { leftPanel, rightPanel });
-        new VerticalItemPanel(_connectionPage, new(0, 450f), 150f, true, new IMenuElement[] { _elementFactory.ElementLookup["Enabled"], optionPanels  });
+        GridItemPanel optionPanels = new(_connectionPage, new(0f, 150), 2, 100f, 600f, false, [leftPanel, rightPanel]);
+        new VerticalItemPanel(_connectionPage, new(0, 450f), 150f, true, [_elementFactory.ElementLookup["Enabled"], optionPanels]);
         _elementFactory.ElementLookup["NoLogic"].MoveTo(new(0, -350f));
 
         _elementFactory.ElementLookup["AddHintMarkers"].SelfChanged += ToggleHintVisibility;
@@ -64,6 +72,59 @@ internal class RandoMenu
             _hintPanel.Hide();
         else
             _hintPanel.Show();
+
+        // Build page.
+        _victoryPage = new("Victory Settings");
+        SmallButton button = new(_connectionPage, "Victory Conditions");
+        button.AddHideAndShowEvent(_connectionPage, _victoryPage);
+        _victoryPage.BeforeGoBack += () => button.Text.color = !ExtraRando.Instance.Settings.UseVictoryConditions 
+            ? Colors.DEFAULT_COLOR 
+            : Colors.TRUE_COLOR;
+
+        ToggleButton enableVictoryCondition = new(_victoryPage, "Enabled");
+        enableVictoryCondition.Bind(ExtraRando.Instance.Settings, ReflectionHelper.GetPropertyInfo(typeof(RandoSettings), "UseVictoryConditions"));
+
+        MenuEnum<VictoryConditionHandling> conditionHandler = new(_victoryPage, "Required conditions");
+        conditionHandler.Bind(ExtraRando.Instance.Settings, ReflectionHelper.GetPropertyInfo(typeof(RandoSettings), "ConditionHandling"));
+
+        ToggleButton victoryMode = new(_victoryPage, "Warp to Credits");
+        victoryMode.Bind(ExtraRando.Instance.Settings, ReflectionHelper.GetPropertyInfo(typeof(RandoSettings), "WarpToCredits"));
+
+        SmallButton resetButton = new(_victoryPage, "Reset");
+        
+        new VerticalItemPanel(_victoryPage, new(0, 450f), 100f, true, 
+        [
+            enableVictoryCondition,
+            conditionHandler,
+            victoryMode,
+            resetButton
+        ]);
+
+        List<IValueElement> elements = [];
+        foreach (IVictoryCondition condition in VictoryModule.AvailableConditions)
+        {
+            EntryField<int> conditionField = new(_victoryPage, condition.GetMenuName());
+            string conditionName = condition.GetType().Name;
+            if (!ExtraRando.Instance.Settings.VictoryConditions.ContainsKey(conditionName))
+                ExtraRando.Instance.Settings.VictoryConditions.Add(conditionName, 0);
+
+            conditionField.SelfChanged += x => 
+            {
+                int clampedAmount = condition.ClampAvailableRange((int)x.Value);
+                if (clampedAmount != (int)x.Value)
+                    conditionField.SetValue(clampedAmount);
+                else
+                    ExtraRando.Instance.Settings.VictoryConditions[conditionName] = clampedAmount;
+            };
+            conditionField.SetValue(ExtraRando.Instance.Settings.VictoryConditions[conditionName]);
+            elements.Add(conditionField);
+        }
+        new GridItemPanel(_victoryPage, new(0, 0f), 5, 150, 300, true, [..elements]);
+        resetButton.OnClick += () => 
+        {
+            foreach (IValueElement conditionField in elements)
+                conditionField.SetValue(0);
+        };
     }
 
     private void ToggleHintVisibility(IValueElement obj)
