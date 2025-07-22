@@ -91,10 +91,10 @@
     </ItemGroup>
 
     <Target Name="CopyMod" AfterTargets="PostBuildEvent">
-        <Copy SourceFiles="$(TargetPath);$(TargetDir)$(TargetName).pdb" DestinationFolder="$(HollowKnightRefs)\Mods\$(TargetName)" OverwriteReadOnlyFiles="true" />
+        <Copy SourceFiles="$(TargetPath);$(TargetDir)$(TargetName).pdb;$(TargetDir)$(TargetName).xml" DestinationFolder="$(HollowKnightRefs)\Mods\$(TargetName)" OverwriteReadOnlyFiles="true" />
     </Target>
 
     <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-        <Exec Command="cd $(HollowKnightRefs)\Mods\$(TargetName)&#xD;&#xA;del *.dll&#xD;&#xA;del *.pdb" />
+        <Exec Command="cd $(HollowKnightRefs)\Mods\$(TargetName)&#xD;&#xA;del *.dll&#xD;&#xA;del *.pdb&#xD;&#xA;del *.xml" />
     </Target>
 </Project>

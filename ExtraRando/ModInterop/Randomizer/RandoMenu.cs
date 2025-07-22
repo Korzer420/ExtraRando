@@ -39,6 +39,9 @@ internal class RandoMenu
         // Generate pages and setting elements
         _connectionPage = new("Extra Rando", previousPage);
         _elementFactory = new(_connectionPage, ExtraRando.Instance.Settings);
+        SmallButton victoryButton = new(_connectionPage, "Victory Conditions");
+        victoryButton.Text.color = !ExtraRando.Instance.Settings.UseVictoryConditions ? Colors.DEFAULT_COLOR : Colors.TRUE_COLOR;
+
         _hintPanel = new(_connectionPage, new(0, -275), 4, 0, 300, false, [ 
             _elementFactory.ElementLookup["JunkItemHints"],
             _elementFactory.ElementLookup["PotentialItemHints"],
@@ -51,7 +54,8 @@ internal class RandoMenu
             _elementFactory.ElementLookup["RandomizePantheonAccess"],
             _elementFactory.ElementLookup["RandomizeButt"],
             _elementFactory.ElementLookup["RandomizeAwfulLocations"],
-            _elementFactory.ElementLookup["EnforceJunkLocations"]
+            _elementFactory.ElementLookup["EnforceJunkLocations"],
+            victoryButton
         ]);
         VerticalItemPanel rightPanel = new(_connectionPage, new(0, 0), 80f, false, [
             _elementFactory.ElementLookup["SplitFireball"],
@@ -74,10 +78,10 @@ internal class RandoMenu
             _hintPanel.Show();
 
         // Build page.
-        _victoryPage = new("Victory Settings");
-        SmallButton button = new(_connectionPage, "Victory Conditions");
-        button.AddHideAndShowEvent(_connectionPage, _victoryPage);
-        _victoryPage.BeforeGoBack += () => button.Text.color = !ExtraRando.Instance.Settings.UseVictoryConditions 
+        _victoryPage = new("Victory Settings", _connectionPage);
+        
+        victoryButton.AddHideAndShowEvent(_connectionPage, _victoryPage);
+        _victoryPage.BeforeGoBack += () => victoryButton.Text.color = !ExtraRando.Instance.Settings.UseVictoryConditions 
             ? Colors.DEFAULT_COLOR 
             : Colors.TRUE_COLOR;
 
@@ -101,7 +105,7 @@ internal class RandoMenu
         ]);
 
         List<IValueElement> elements = [];
-        foreach (IVictoryCondition condition in VictoryModule.AvailableConditions)
+        foreach (IVictoryCondition condition in VictoryModule.AvailableConditions.OrderBy(x => x.GetMenuName()))
         {
             EntryField<int> conditionField = new(_victoryPage, condition.GetMenuName());
             string conditionName = condition.GetType().Name;
