@@ -1,4 +1,5 @@
 ﻿using ExtraRando.ModInterop.ItemChangerInterop.Modules;
+using RandomizerCore.Logic;
 
 namespace ExtraRando.Data;
 
@@ -25,10 +26,10 @@ public interface IVictoryCondition
     public string GetMenuName();
 
     /// <summary>
-    /// Gets the term used in the logic for couting said items.
-    /// <para/>This is used as a condition for black egg temple access (e.g. for world sense).
+    /// Gets the term used in the logic that is used for black egg temple access (e.g. for world sense).
+    /// <para/>This method is called when the victory condition should be used and should serve as a setup opportunity for the term in question.
     /// </summary>
-    public string GetLogicTerm();
+    public string PrepareLogic(LogicManagerBuilder logicBuilder);
 
     /// <summary>
     /// Gets the text displayed as a hint on the hint tablet.
@@ -39,7 +40,7 @@ public interface IVictoryCondition
 
     /// <summary>
     /// Clamps the set menu number in between the allowed value.
-    /// Return a valid valid.
+    /// Return a valid value.
     /// </summary>
     /// <param name="setAmount">The input of the user which should be verified.</param>
     public int ClampAvailableRange(int setAmount);

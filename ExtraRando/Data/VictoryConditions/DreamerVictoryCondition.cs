@@ -2,6 +2,7 @@
 using ItemChanger;
 using ItemChanger.Internal;
 using ItemChanger.Items;
+using RandomizerCore.Logic;
 using RandomizerMod.Extensions;
 using System;
 using System.Collections.Generic;
@@ -20,7 +21,7 @@ public class DreamerVictoryCondition : IVictoryCondition
 
     public string GetMenuName() => "Dreamer";
 
-    public string GetLogicTerm() => "DREAMER";
+    public string PrepareLogic(LogicManagerBuilder builder) => "DREAMER";
 
     public void StartListening() => On.PlayerData.IncrementInt += PlayerData_IncrementInt;
 

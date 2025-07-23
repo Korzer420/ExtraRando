@@ -4,6 +4,7 @@ using ItemChanger;
 using ItemChanger.Internal;
 using ItemChanger.Items;
 using Modding;
+using RandomizerCore.Logic;
 using RandomizerMod.Extensions;
 using System;
 using System.Collections.Generic;
@@ -20,7 +21,7 @@ public class EssenceVictoryCondition : IVictoryCondition
 
     public int ClampAvailableRange(int setAmount) => Math.Max(0, Math.Min(setAmount, 2400));
 
-    public string GetLogicTerm() => "ESSENCE";
+    public string PrepareLogic(LogicManagerBuilder builder) => "ESSENCE";
 
     public string GetMenuName() => "Essence";
 

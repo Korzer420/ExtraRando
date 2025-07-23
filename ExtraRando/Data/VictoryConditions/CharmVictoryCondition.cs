@@ -1,9 +1,9 @@
 ﻿using ExtraRando.ModInterop.ItemChangerInterop.Modules;
 using ItemChanger;
 using ItemChanger.Internal;
-using ItemChanger.Items;
 using KorzUtils.Helper;
 using Modding;
+using RandomizerCore.Logic;
 using RandomizerMod.Extensions;
 using System;
 using System.Collections.Generic;
@@ -26,7 +26,7 @@ internal class CharmVictoryCondition : IVictoryCondition
     /// <inheritdoc/>
     public string GetMenuName() => "Charms";
 
-    public string GetLogicTerm() => "CHARMS";
+    public string PrepareLogic(LogicManagerBuilder builder) => "CHARMS";
 
     /// <inheritdoc/>
     public void StartListening() => ModHooks.SetPlayerBoolHook += ModHooks_SetPlayerBoolHook;

@@ -2,6 +2,7 @@
 using ItemChanger;
 using ItemChanger.Internal;
 using ItemChanger.Items;
+using RandomizerCore.Logic;
 using RandomizerMod.Extensions;
 using System;
 using System.Collections.Generic;
@@ -20,7 +21,7 @@ public class GrubsVictoryCondition : IVictoryCondition
 
     public string GetMenuName() => "Grubs";
 
-    public string GetLogicTerm() => "GRUBS";
+    public string PrepareLogic(LogicManagerBuilder builder) => "GRUBS";
 
     public void StartListening() => On.PlayerData.IncrementInt += PlayerData_IncrementInt;
 

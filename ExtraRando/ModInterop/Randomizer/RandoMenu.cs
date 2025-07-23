@@ -23,6 +23,10 @@ internal class RandoMenu
     private GridItemPanel _hintPanel;
 
     private MenuPage _victoryPage;
+    private Dictionary<string, IValueElement> _subPageLookup = [];
+    private const string ToggleVictoryCondition = "Toggle Victory Conditions";
+    private const string ConditionHandling = "Condition Handling";
+    private const string WarpToCredits = "Warp To Credits";
 
     #endregion
 
@@ -36,6 +40,7 @@ internal class RandoMenu
 
     private void ConstructMenu(MenuPage previousPage)
     {
+        _subPageLookup.Clear();
         // Generate pages and setting elements
         _connectionPage = new("Extra Rando", previousPage);
         _elementFactory = new(_connectionPage, ExtraRando.Instance.Settings);
@@ -87,12 +92,15 @@ internal class RandoMenu
 
         ToggleButton enableVictoryCondition = new(_victoryPage, "Enabled");
         enableVictoryCondition.Bind(ExtraRando.Instance.Settings, ReflectionHelper.GetPropertyInfo(typeof(RandoSettings), "UseVictoryConditions"));
+        _subPageLookup.Add(ToggleVictoryCondition, enableVictoryCondition);
 
         MenuEnum<VictoryConditionHandling> conditionHandler = new(_victoryPage, "Required conditions");
         conditionHandler.Bind(ExtraRando.Instance.Settings, ReflectionHelper.GetPropertyInfo(typeof(RandoSettings), "ConditionHandling"));
+        _subPageLookup.Add(ConditionHandling, conditionHandler);
 
         ToggleButton victoryMode = new(_victoryPage, "Warp to Credits");
         victoryMode.Bind(ExtraRando.Instance.Settings, ReflectionHelper.GetPropertyInfo(typeof(RandoSettings), "WarpToCredits"));
+        _subPageLookup.Add(WarpToCredits, victoryMode);
 
         SmallButton resetButton = new(_victoryPage, "Reset");
         
@@ -122,6 +130,7 @@ internal class RandoMenu
             };
             conditionField.SetValue(ExtraRando.Instance.Settings.VictoryConditions[conditionName]);
             elements.Add(conditionField);
+            _subPageLookup.Add(conditionName, conditionField);
         }
         new GridItemPanel(_victoryPage, new(0, 0f), 5, 150, 300, true, [..elements]);
         resetButton.OnClick += () => 
@@ -164,7 +173,17 @@ internal class RandoMenu
         if (randoSettings == null)
             _elementFactory.ElementLookup[nameof(ExtraRando.Instance.Settings.Enabled)].SetValue(false);
         else
+        { 
             _elementFactory.SetMenuValues(randoSettings);
+            _subPageLookup[ToggleVictoryCondition].SetValue(randoSettings.UseVictoryConditions);
+            _subPageLookup[ConditionHandling].SetValue(randoSettings.ConditionHandling);
+            _subPageLookup[WarpToCredits].SetValue(randoSettings.WarpToCredits);
+
+            randoSettings.VictoryConditions ??= [];
+            foreach (string key in randoSettings.VictoryConditions.Keys)
+                if (_subPageLookup.ContainsKey(key))
+                    _subPageLookup[key].SetValue(randoSettings.VictoryConditions[key]);
+        }
     }
 
     #endregion

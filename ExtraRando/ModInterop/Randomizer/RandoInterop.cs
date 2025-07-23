@@ -959,11 +959,8 @@ public static class RandoInterop
             foreach (var usedCondition in ExtraRando.Instance.Settings.VictoryConditions.Where(x => x.Value > 0))
             {
                 IVictoryCondition condition = VictoryModule.AvailableConditions.First(x => x.GetType().Name == usedCondition.Key);
-                // We need the extra "IsTerm" check since calling GetOrAdd on a type mismatch causes an exception
-                // For example "DREAMER" is a signed byte term, but we add all as int for simplicity, which causes an issue.
-                if (!builder.IsTerm(condition.GetLogicTerm()))
-                    builder.GetOrAddTerm(condition.GetLogicTerm(), TermType.Int);
-                conditions.Add($"{condition.GetLogicTerm()}>{usedCondition.Value - 1}");
+                string termValue = condition.PrepareLogic(builder);
+                conditions.Add($"{termValue}>{usedCondition.Value - 1}");
             }
             if (conditions.Count > 0)
             {
@@ -1006,9 +1003,13 @@ public static class RandoInterop
         if (ExtraRando.Instance.Settings.AddFixedHints)
             hashModifier += 51;
 
-        if (ExtraRando.Instance.Settings.UseVictoryConditions)
+        if (ExtraRando.Instance.Settings.UseVictoryConditions && ExtraRando.Instance.Settings.VictoryConditions.Any(x => x.Value > 0))
         { 
             hashModifier += 152;
+            hashModifier += ExtraRando.Instance.Settings.VictoryConditions.Where(x => x.Value > 0).Select(x => x.Value).Sum();
+
+            hashModifier += ExtraRando.Instance.Settings.WarpToCredits ? 634 : 0;
+            hashModifier += ExtraRando.Instance.Settings.ConditionHandling == Enums.VictoryConditionHandling.Any ? 79 : 0;
         }
         return hashModifier;
     }
@@ -1018,7 +1019,7 @@ public static class RandoInterop
         orig(self, permaDeath, bossRush);
         if (RandomizerMod.RandomizerMod.IsRandoSave && ExtraRando.Instance.Settings.Enabled)
         {
-            List<AbstractPlacement> toAdd = new();
+            List<AbstractPlacement> toAdd = [];
             if (ExtraRando.Instance.Settings.BlockEarlyGameStags)
             {
                 AbstractPlacement placement = Finder.GetLocation(ItemManager.Dirtmouth_Stag_Door).Wrap();
@@ -1055,7 +1056,6 @@ public static class RandoInterop
             module.WarpToCredits = ExtraRando.Instance.Settings.WarpToCredits;
             foreach (var usedCondition in ExtraRando.Instance.Settings.VictoryConditions.Where(x => x.Value > 0))
             {
-                LogHelper.Write<ExtraRando>(VictoryModule.AvailableConditions.Select(x => x.GetType().Name).Aggregate((x, y) => x + y));
                 Data.IVictoryCondition condition = VictoryModule.AvailableConditions.FirstOrDefault(x => x.GetType().Name == usedCondition.Key);
                 if (condition != null)
                     module.ActiveConditions.Add(condition);

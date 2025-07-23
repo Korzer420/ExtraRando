@@ -109,9 +109,14 @@ public class VictoryModule : Module
         AvailableConditions.Clear();
         AvailableConditions.Add(new CharmVictoryCondition());
         AvailableConditions.Add(new DreamerVictoryCondition());
-        AvailableConditions.Add(new ArcaneEggVictoryCondition());
         AvailableConditions.Add(new GrubsVictoryCondition());
         AvailableConditions.Add(new EssenceVictoryCondition());
+        AvailableConditions.Add(new WandererJournalVictoryCondition());
+        AvailableConditions.Add(new HallownestSealVictoryCondition());
+        AvailableConditions.Add(new KingsIdolVictoryCondition());
+        AvailableConditions.Add(new ArcaneEggVictoryCondition());
+        AvailableConditions.Add(new RelicVictoryCondition());
+        AvailableConditions.Add(new ButtVictoryCondition());
         RequestConditions?.Invoke(AvailableConditions);
 
         foreach (var item in AvailableConditions)

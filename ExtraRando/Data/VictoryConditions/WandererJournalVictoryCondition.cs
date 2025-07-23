@@ -1,18 +1,14 @@
 ﻿using ExtraRando.ModInterop.ItemChangerInterop.Modules;
-using ItemChanger;
 using ItemChanger.Internal;
-using KorzUtils.Helper;
-using RandomizerCore.Logic;
-using RandomizerCore.Randomization;
-using RandomizerMod;
-using RandomizerMod.Extensions;
-using System;
+using ItemChanger;
 using System.Collections.Generic;
-using System.Linq;
+using System;
+using RandomizerMod.Extensions;
+using RandomizerCore.Logic;
 
 namespace ExtraRando.Data.VictoryConditions;
 
-public class ArcaneEggVictoryCondition : IVictoryCondition
+public class WandererJournalVictoryCondition : IVictoryCondition
 {
     #region Interface
 
@@ -20,15 +16,7 @@ public class ArcaneEggVictoryCondition : IVictoryCondition
 
     public int RequiredAmount { get; set; }
 
-    public int ClampAvailableRange(int setAmount) => Math.Min(4, Math.Max(setAmount, 0));
-
-    public string GetMenuName() => "Arcane Eggs";
-
-    public string PrepareLogic(LogicManagerBuilder logicBuilder) => "ARCANEEGGS";
-
-    public void StartListening() => On.PlayerData.IncrementInt += PlayerData_IncrementInt;
-
-    public void StopListening() => On.PlayerData.IncrementInt -= PlayerData_IncrementInt;
+    public int ClampAvailableRange(int setAmount) => Math.Min(14, Math.Max(0, setAmount));
 
     public string GetHintText()
     {
@@ -37,7 +25,7 @@ public class ArcaneEggVictoryCondition : IVictoryCondition
         {
             if (item.IsObtained())
                 continue;
-            if (item.name == ItemNames.Arcane_Egg)
+            if (item.name == ItemNames.Wanderers_Journal)
             {
                 string area = item.RandoLocation()?.LocationDef?.MapArea ?? "an unknown place.";
                 if (!leftItems.ContainsKey(area))
@@ -47,18 +35,26 @@ public class ArcaneEggVictoryCondition : IVictoryCondition
         }
         if (leftItems.Count == 0)
             return null;
-        string text = "These eggs should be hidden in:";
+        string text = "The wanderer journal lie at:";
         foreach (string item in leftItems.Keys)
             text += $"<br>{leftItems[item]} in {item}";
         return text;
     }
+
+    public string PrepareLogic(LogicManagerBuilder builder) => "WANDERERSJOURNALS";
+
+    public string GetMenuName() => "Wanderer's Journal";
+
+    public void StartListening() => On.PlayerData.IncrementInt += PlayerData_IncrementInt;
+
+    public void StopListening() => On.PlayerData.IncrementInt -= PlayerData_IncrementInt;
 
     #endregion
 
     private void PlayerData_IncrementInt(On.PlayerData.orig_IncrementInt orig, PlayerData self, string intName)
     {
         orig(self, intName);
-        if (intName == nameof(PlayerData.trinket4))
+        if (intName == nameof(PlayerData.trinket1))
         {
             CurrentAmount++;
             ItemChangerMod.Modules.Get<VictoryModule>().CheckForFinish();
