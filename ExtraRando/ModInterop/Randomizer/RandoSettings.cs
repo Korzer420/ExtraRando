@@ -45,6 +45,10 @@ public class RandoSettings
 
     public bool EnforceJunkLocations { get; set; }
 
+    /// <summary>
+    /// Gets or sets all victory conditions that are available.
+    /// <para/>If the value is not set to 0, the condition is used.
+    /// </summary>
     [MenuIgnore]
     public Dictionary<string,int> VictoryConditions { get; set; } = [];
 
