@@ -1,3 +1,4 @@
+using ExtraRando.Data;
 using ExtraRando.ModInterop.ItemChangerInterop;
 using ExtraRando.ModInterop.ItemChangerInterop.Modules;
 using ItemChanger;
@@ -952,6 +953,23 @@ public static class RandoInterop
         }
         if (ExtraRando.Instance.Settings.UseKeyring)
             builder.AddItem(new SingleItem(ItemManager.Key_Ring, new(builder.GetTerm("SIMPLE"), 4)));
+        if (ExtraRando.Instance.Settings.UseVictoryConditions)
+        {
+            List<string> conditions = [];
+            foreach (var usedCondition in ExtraRando.Instance.Settings.VictoryConditions.Where(x => x.Value > 0))
+            {
+                IVictoryCondition condition = VictoryModule.AvailableConditions.First(x => x.GetType().Name == usedCondition.Key);
+                string termValue = condition.PrepareLogic(builder);
+                conditions.Add($"{termValue}>{usedCondition.Value - 1}");
+            }
+            if (conditions.Count > 0)
+            {
+                string logic = ExtraRando.Instance.Settings.ConditionHandling == Enums.VictoryConditionHandling.Any
+                    ? conditions.Aggregate((x, y) => $"{x} | {y}")
+                    : conditions.Aggregate((x, y) => $"{x} + {y}");
+                builder.DoLogicEdit(new("Opened_Black_Egg_Temple", $"Room_temple[left1] + ({logic})"));
+            }
+        }
     }
 
     private static void CheckForNoLogic(GenerationSettings settings, LogicManagerBuilder builder)
@@ -984,6 +1002,15 @@ public static class RandoInterop
             hashModifier += 5;
         if (ExtraRando.Instance.Settings.AddFixedHints)
             hashModifier += 51;
+
+        if (ExtraRando.Instance.Settings.UseVictoryConditions && ExtraRando.Instance.Settings.VictoryConditions.Any(x => x.Value > 0))
+        {
+            hashModifier += 152;
+            hashModifier += ExtraRando.Instance.Settings.VictoryConditions.Where(x => x.Value > 0).Select(x => x.Value).Sum();
+
+            hashModifier += ExtraRando.Instance.Settings.WarpToCredits ? 634 : 0;
+            hashModifier += ExtraRando.Instance.Settings.ConditionHandling == Enums.VictoryConditionHandling.Any ? 79 : 0;
+        }
         return hashModifier;
     }
 
@@ -992,7 +1019,7 @@ public static class RandoInterop
         orig(self, permaDeath, bossRush);
         if (RandomizerMod.RandomizerMod.IsRandoSave && ExtraRando.Instance.Settings.Enabled)
         {
-            List<AbstractPlacement> toAdd = new();
+            List<AbstractPlacement> toAdd = [];
             if (ExtraRando.Instance.Settings.BlockEarlyGameStags)
             {
                 AbstractPlacement placement = Finder.GetLocation(ItemManager.Dirtmouth_Stag_Door).Wrap();
@@ -1015,12 +1042,28 @@ public static class RandoInterop
 
     private static void RandoController_OnExportCompleted(RandoController obj)
     {
-        if (!ExtraRando.Instance.Settings.Enabled || !ExtraRando.Instance.Settings.AddFixedHints)
+        if (!ExtraRando.Instance.Settings.Enabled)
             return;
-        if (ItemChangerMod.Modules.Get<HintModule>() == null)
+        if (ExtraRando.Instance.Settings.AddFixedHints && ItemChangerMod.Modules.Get<HintModule>() == null)
         {
             HintModule hintModule = ItemChangerMod.Modules.GetOrAdd<HintModule>();
             hintModule.AddHints();
+        }
+        if (ExtraRando.Instance.Settings.UseVictoryConditions)
+        {
+            VictoryModule module = ItemChangerMod.Modules.GetOrAdd<VictoryModule>();
+            module.CombineCondition = ExtraRando.Instance.Settings.ConditionHandling == Enums.VictoryConditionHandling.All;
+            module.WarpToCredits = ExtraRando.Instance.Settings.WarpToCredits;
+            foreach (var usedCondition in ExtraRando.Instance.Settings.VictoryConditions)
+            {
+                Data.IVictoryCondition condition = VictoryModule.AvailableConditions.FirstOrDefault(x => x.GetType().Name == usedCondition.Key);
+                if (condition != null)
+                {
+                    condition.RequiredAmount = usedCondition.Value;
+                    if (condition.RequiredAmount > 0)
+                        module.ActiveConditions.Add(condition);
+                }
+            }
         }
     }
 
@@ -1039,6 +1082,7 @@ public static class RandoInterop
         SettingsLog.AfterLogSettings += WriteSettings;
         RandoController.OnCalculateHash += RandoController_OnCalculateHash;
         RandoController.OnExportCompleted += RandoController_OnExportCompleted;
+
 
         if (ModHooks.GetMod("RandoSettingsManager") is Mod)
             HookRandoSettingsManager();

@@ -1,3 +1,8 @@
+using ExtraRando.Data;
+using ExtraRando.Enums;
+using MenuChanger.Attributes;
+using System.Collections.Generic;
+
 namespace ExtraRando.ModInterop.Randomizer;
 
 public class RandoSettings
@@ -39,4 +44,20 @@ public class RandoSettings
     public bool AddFixedHints { get; set; }
 
     public bool EnforceJunkLocations { get; set; }
+
+    /// <summary>
+    /// Gets or sets all victory conditions that are available.
+    /// <para/>If the value is not set to 0, the condition is used.
+    /// </summary>
+    [MenuIgnore]
+    public Dictionary<string,int> VictoryConditions { get; set; } = [];
+
+    [MenuIgnore]
+    public bool UseVictoryConditions { get; set; }
+
+    [MenuIgnore]
+    public VictoryConditionHandling ConditionHandling { get; set; }
+
+    [MenuIgnore]
+    public bool WarpToCredits { get; set; }
 }
