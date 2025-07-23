@@ -101,6 +101,24 @@ Removes all logic from the randomization process. This will greatly decrease the
 
 **Caution is especially advised if you choose to use "road blocking" connections like Lever Rando, More Doors and/or Breakable Wall Rando.**
 
+## Victory Conditions
+Changes the requirement for beating the game. You may choose one or more conditions by setting the required item amounts.
+
+### Required conditions
+This determines if all set conditions must be met or just any.
+
+### Warp to End
+If this enabled, you'll be warped to the stats screen immediately upon fulfulling the victory condition. You may still enter the game file afterwards and continue. **This end warp is only performed once per save file.**
+Otherwise meeting the end condition will open the black egg temple door allowing you to fight the Hollow Knight. (You'll be notified by a textbox that you can enter Black Egg Temple)
+
+### Hint System
+A tablet will be added in the room with the black egg temple door (where dreamers would normally be required). This tablet might contain information about where you can find ending required items.
+Already fulfilled conditions will not show up there. It's important to note that depending on the context the hint tablet may be different. For example, vanilla items might not be listed there.
+Note that even if you only chose one requirement to be met, hints for others might still appear on that tablet.
+
+**Keep in mind, that the victory conditions might not check for conditional existing items. For example, if you choose relics as a victory condition, but each relic is replaced with 1 Geo (by the junk setting of base rando), the seed will never generate.
+It is recommended that the victory conditions are configured at the end, to avoid issues with other connections that might provide a victory condition themselves.**
+
 # Mod support
 - Works with RSM (RandoSettingsManager)
 - Location Pins appear in RandoMapMod
