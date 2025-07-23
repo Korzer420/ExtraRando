@@ -122,9 +122,7 @@ public class VictoryModule : Module
         foreach (var item in AvailableConditions)
         {
             string conditionName = item.GetType().Name;
-            if (ExtraRando.Instance.Settings.VictoryConditions.ContainsKey(conditionName))
-                item.RequiredAmount = ExtraRando.Instance.Settings.VictoryConditions[conditionName];
-            else
+            if (!ExtraRando.Instance.Settings.VictoryConditions.ContainsKey(conditionName))
                 ExtraRando.Instance.Settings.VictoryConditions.Add(conditionName, 0);
         }
     }
@@ -145,8 +143,10 @@ public class VictoryModule : Module
             string hintText = null;
             foreach (var condition in ActiveConditions)
             {
+                if (condition.CurrentAmount >= condition.RequiredAmount)
+                    continue;
                 string conditionHint = condition.GetHintText();
-                if (condition == null)
+                if (conditionHint == null)
                     continue;
                 hintText += $"<page>{conditionHint}";
             }

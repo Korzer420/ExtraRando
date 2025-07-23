@@ -34,7 +34,6 @@ public class ExtraRando : Mod, IGlobalSettings<GlobalSaveSettings>
     {
         ItemManager.Initialize();
         RandoInterop.Initialize();
-        VictoryModule.LoadConditions();
     }
 
     public void OnLoadGlobal(GlobalSaveSettings saveSettings)

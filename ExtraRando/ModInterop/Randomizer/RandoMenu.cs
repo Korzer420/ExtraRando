@@ -40,6 +40,7 @@ internal class RandoMenu
 
     private void ConstructMenu(MenuPage previousPage)
     {
+        VictoryModule.LoadConditions();
         _subPageLookup.Clear();
         // Generate pages and setting elements
         _connectionPage = new("Extra Rando", previousPage);
@@ -98,7 +99,7 @@ internal class RandoMenu
         conditionHandler.Bind(ExtraRando.Instance.Settings, ReflectionHelper.GetPropertyInfo(typeof(RandoSettings), "ConditionHandling"));
         _subPageLookup.Add(ConditionHandling, conditionHandler);
 
-        ToggleButton victoryMode = new(_victoryPage, "Warp to Credits");
+        ToggleButton victoryMode = new(_victoryPage, "Warp to End");
         victoryMode.Bind(ExtraRando.Instance.Settings, ReflectionHelper.GetPropertyInfo(typeof(RandoSettings), "WarpToCredits"));
         _subPageLookup.Add(WarpToCredits, victoryMode);
 

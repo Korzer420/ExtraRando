@@ -968,7 +968,7 @@ public static class RandoInterop
                     ? conditions.Aggregate((x, y) => $"{x} | {y}")
                     : conditions.Aggregate((x, y) => $"{x} + {y}");
                 builder.DoLogicEdit(new("Opened_Black_Egg_Temple", $"Room_temple[left1] + ({logic})"));
-            }   
+            }
         }
     }
 
@@ -1004,7 +1004,7 @@ public static class RandoInterop
             hashModifier += 51;
 
         if (ExtraRando.Instance.Settings.UseVictoryConditions && ExtraRando.Instance.Settings.VictoryConditions.Any(x => x.Value > 0))
-        { 
+        {
             hashModifier += 152;
             hashModifier += ExtraRando.Instance.Settings.VictoryConditions.Where(x => x.Value > 0).Select(x => x.Value).Sum();
 
@@ -1054,11 +1054,15 @@ public static class RandoInterop
             VictoryModule module = ItemChangerMod.Modules.GetOrAdd<VictoryModule>();
             module.CombineCondition = ExtraRando.Instance.Settings.ConditionHandling == Enums.VictoryConditionHandling.All;
             module.WarpToCredits = ExtraRando.Instance.Settings.WarpToCredits;
-            foreach (var usedCondition in ExtraRando.Instance.Settings.VictoryConditions.Where(x => x.Value > 0))
+            foreach (var usedCondition in ExtraRando.Instance.Settings.VictoryConditions)
             {
                 Data.IVictoryCondition condition = VictoryModule.AvailableConditions.FirstOrDefault(x => x.GetType().Name == usedCondition.Key);
                 if (condition != null)
-                    module.ActiveConditions.Add(condition);
+                {
+                    condition.RequiredAmount = usedCondition.Value;
+                    if (condition.RequiredAmount > 0)
+                        module.ActiveConditions.Add(condition);
+                }
             }
         }
     }
