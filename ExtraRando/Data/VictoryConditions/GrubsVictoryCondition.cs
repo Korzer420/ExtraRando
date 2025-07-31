@@ -21,7 +21,7 @@ public class GrubsVictoryCondition : IVictoryCondition
 
     public string GetMenuName() => "Grubs";
 
-    public string PrepareLogic(LogicManagerBuilder builder) => "GRUBS";
+    public string PrepareLogic(LogicManagerBuilder builder) => $"GRUBS>{RequiredAmount - 1}";
 
     public void StartListening() => On.PlayerData.IncrementInt += PlayerData_IncrementInt;
 

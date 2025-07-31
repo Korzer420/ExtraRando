@@ -41,7 +41,7 @@ internal class KingsIdolVictoryCondition : IVictoryCondition
         return text;
     }
 
-    public string PrepareLogic(LogicManagerBuilder builder) => "KINGSIDOLS";
+    public string PrepareLogic(LogicManagerBuilder builder) => $"KINGSIDOLS>{RequiredAmount - 1}";
 
     public string GetMenuName() => "King's Idol";
 

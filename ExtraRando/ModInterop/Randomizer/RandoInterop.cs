@@ -959,8 +959,9 @@ public static class RandoInterop
             foreach (var usedCondition in ExtraRando.Instance.Settings.VictoryConditions.Where(x => x.Value > 0))
             {
                 IVictoryCondition condition = VictoryModule.AvailableConditions.First(x => x.GetType().Name == usedCondition.Key);
-                string termValue = condition.PrepareLogic(builder);
-                conditions.Add($"{termValue}>{usedCondition.Value - 1}");
+                condition.RequiredAmount = usedCondition.Value;
+                string logicClause = condition.PrepareLogic(builder);
+                conditions.Add($"({logicClause})");
             }
             if (conditions.Count > 0)
             {

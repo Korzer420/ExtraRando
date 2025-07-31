@@ -21,7 +21,7 @@ public class DreamerVictoryCondition : IVictoryCondition
 
     public string GetMenuName() => "Dreamer";
 
-    public string PrepareLogic(LogicManagerBuilder builder) => "DREAMER";
+    public string PrepareLogic(LogicManagerBuilder builder) => $"DREAMER>{RequiredAmount - 1}";
 
     public void StartListening() => On.PlayerData.IncrementInt += PlayerData_IncrementInt;
 

@@ -26,7 +26,7 @@ internal class CharmVictoryCondition : IVictoryCondition
     /// <inheritdoc/>
     public string GetMenuName() => "Charms";
 
-    public string PrepareLogic(LogicManagerBuilder builder) => "CHARMS";
+    public string PrepareLogic(LogicManagerBuilder builder) => $"CHARMS>{RequiredAmount - 1}";
 
     /// <inheritdoc/>
     public void StartListening() => ModHooks.SetPlayerBoolHook += ModHooks_SetPlayerBoolHook;

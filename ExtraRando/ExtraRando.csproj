@@ -11,7 +11,7 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <HollowKnightRefs>E:/Program Files/Steam/steamapps/common/Hollow Knight/hollow_knight_Data/Managed/</HollowKnightRefs>
+        <HollowKnightRefs>E:\Program Files\Steam\steamapps\common\Hollow Knight\hollow_knight_Data\Managed\</HollowKnightRefs>
         <GenerateDocumentationFile>True</GenerateDocumentationFile>
         <DocumentationFile></DocumentationFile>
         <FileVersion>0.5.1.0</FileVersion>
@@ -35,7 +35,7 @@
           <HintPath>$(HollowKnightRefs)\Mods\ItemChanger\ItemChanger.dll</HintPath>
         </Reference>
         <Reference Include="KorzUtils">
-          <HintPath>$(HollowKnightRefs)\Mods\KorzUtils\KorzUtils.dll</HintPath>
+          <HintPath>..\..\..\Program Files\Steam\steamapps\common\Hollow Knight\hollow_knight_Data\Managed\Mods\KorzUtils\KorzUtils.dll</HintPath>
         </Reference>
         <Reference Include="MenuChanger">
           <HintPath>$(HollowKnightRefs)\Mods\MenuChanger\MenuChanger.dll</HintPath>

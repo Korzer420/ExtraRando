@@ -26,8 +26,9 @@ public interface IVictoryCondition
     public string GetMenuName();
 
     /// <summary>
-    /// Gets the term used in the logic that is used for black egg temple access (e.g. for world sense).
-    /// <para/>This method is called when the victory condition should be used and should serve as a setup opportunity for the term in question.
+    /// Gets the logic that is used for black egg temple access (e.g. for world sense).
+    /// <para/>This method is called when the victory condition should be used and should serve as a setup opportunity for the logic in question.
+    /// <para/>Keep in mind that you need to handle the required amount yourself!
     /// </summary>
     public string PrepareLogic(LogicManagerBuilder logicBuilder);
 

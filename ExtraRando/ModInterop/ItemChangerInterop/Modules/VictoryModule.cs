@@ -117,6 +117,8 @@ public class VictoryModule : Module
         AvailableConditions.Add(new ArcaneEggVictoryCondition());
         AvailableConditions.Add(new RelicVictoryCondition());
         AvailableConditions.Add(new ButtVictoryCondition());
+        AvailableConditions.Add(new WhiteFragmentsVictoryCondition());
+        AvailableConditions.Add(new MillibelleVictoryCondition());
         RequestConditions?.Invoke(AvailableConditions);
 
         foreach (var item in AvailableConditions)

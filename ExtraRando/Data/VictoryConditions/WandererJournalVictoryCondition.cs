@@ -41,7 +41,7 @@ public class WandererJournalVictoryCondition : IVictoryCondition
         return text;
     }
 
-    public string PrepareLogic(LogicManagerBuilder builder) => "WANDERERSJOURNALS";
+    public string PrepareLogic(LogicManagerBuilder builder) => $"WANDERERSJOURNALS>{RequiredAmount - 1}";
 
     public string GetMenuName() => "Wanderer's Journal";
 

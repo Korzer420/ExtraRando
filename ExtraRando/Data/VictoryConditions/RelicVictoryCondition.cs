@@ -69,7 +69,7 @@ public class RelicVictoryCondition : IVictoryCondition
             new(term, 1),
             new(builder.GetTerm("ARCANEEGGS"), 1)
         ]));
-        return "RELICS";
+        return $"RELICS>{RequiredAmount - 1}";
     }
 
     public string GetMenuName() => "Relics";

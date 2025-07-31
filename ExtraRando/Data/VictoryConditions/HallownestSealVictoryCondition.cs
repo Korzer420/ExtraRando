@@ -41,7 +41,7 @@ internal class HallownestSealVictoryCondition : IVictoryCondition
         return text;
     }
 
-    public string PrepareLogic(LogicManagerBuilder builder) => "HALLOWNESTSEALS";
+    public string PrepareLogic(LogicManagerBuilder builder) => $"HALLOWNESTSEALS>{RequiredAmount - 1}";
 
     public string GetMenuName() => "Hallownest Seals";
 

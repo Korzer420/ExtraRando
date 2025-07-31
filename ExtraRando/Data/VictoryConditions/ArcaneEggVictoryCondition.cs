@@ -24,7 +24,7 @@ public class ArcaneEggVictoryCondition : IVictoryCondition
 
     public string GetMenuName() => "Arcane Eggs";
 
-    public string PrepareLogic(LogicManagerBuilder logicBuilder) => "ARCANEEGGS";
+    public string PrepareLogic(LogicManagerBuilder logicBuilder) => $"ARCANEEGGS>{RequiredAmount - 1}";
 
     public void StartListening() => On.PlayerData.IncrementInt += PlayerData_IncrementInt;
 

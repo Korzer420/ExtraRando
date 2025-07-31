@@ -21,7 +21,7 @@ public class EssenceVictoryCondition : IVictoryCondition
 
     public int ClampAvailableRange(int setAmount) => Math.Max(0, Math.Min(setAmount, 2400));
 
-    public string PrepareLogic(LogicManagerBuilder builder) => "ESSENCE";
+    public string PrepareLogic(LogicManagerBuilder builder) => $"ESSENCE>{RequiredAmount - 1}";
 
     public string GetMenuName() => "Essence";
 
