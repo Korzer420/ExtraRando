@@ -22,7 +22,7 @@ internal class MillibelleVictoryCondition : IVictoryCondition
 
     public string GetMenuName() => "Millibelle Deposit";
 
-    public string PrepareLogic(LogicManagerBuilder logicBuilder) => "Fungus3_35[right1] + Can_Replenish_Geo";
+    public string PrepareLogic(LogicManagerBuilder logicBuilder) => "Fungus3_35[right1]/ + Can_Replenish_Geo";
 
     public void StartListening()
     {
