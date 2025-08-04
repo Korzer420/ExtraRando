@@ -119,6 +119,7 @@ public class VictoryModule : Module
         AvailableConditions.Add(new ButtVictoryCondition());
         AvailableConditions.Add(new WhiteFragmentsVictoryCondition());
         AvailableConditions.Add(new MillibelleVictoryCondition());
+        AvailableConditions.Add(new RancidEggVictoryCondition());
         RequestConditions?.Invoke(AvailableConditions);
 
         foreach (var item in AvailableConditions)
