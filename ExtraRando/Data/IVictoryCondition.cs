@@ -1,12 +1,12 @@
 ﻿using ExtraRando.ModInterop.ItemChangerInterop.Modules;
 using ItemChanger;
 using ItemChanger.Internal;
+using ItemChanger.Tags;
 using RandomizerCore.Logic;
 using RandomizerMod.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 
 namespace ExtraRando.Data;
 
@@ -71,6 +71,17 @@ public interface IVictoryCondition
 /// </summary>
 public static class IVictoryConditionHelpers
 {
+    private static string GetDisplaySource(AbstractPlacement placement)
+    {
+        foreach (var tag in placement.GetPlacementAndLocationTags().OfType<IInteropTag>())
+        {
+            if (tag.Message != "RecentItems") continue;
+            if (tag.TryGetProperty("DisplaySource", out string value)) return value;
+        }
+
+        return null;
+    }
+
     /// <summary>
     /// List all areas where missing items relevant to the victory condition may be found.
     /// </summary>
@@ -81,18 +92,23 @@ public static class IVictoryConditionHelpers
     public static string GenerateHintText(this IVictoryCondition self, string desc, Func<AbstractItem, int> counter)
     {
         Dictionary<string, int> leftItems = [];
-        foreach (AbstractItem item in Ref.Settings.GetItems())
+        foreach (var placement in Ref.Settings.Placements.Values)
         {
-            if (item.IsObtained())
-                continue;
-
-            int count = counter(item);
-            if (count > 0)
+            string source = null;
+            foreach (var item in placement.Items)
             {
-                string area = item.RandoLocation()?.LocationDef?.MapArea ?? "an unknown place.";
-                if (!leftItems.ContainsKey(area))
-                    leftItems.Add(area, 0);
-                leftItems[area] += count;
+                if (item.IsObtained())
+                    continue;
+
+                int count = counter(item);
+                if (count > 0)
+                {
+                    source ??= GetDisplaySource(placement) ?? placement.RandoLocation()?.LocationDef?.MapArea ?? "an unknown place";
+                    if (!leftItems.ContainsKey(source))
+                        leftItems.Add(source, count);
+                    else
+                        leftItems[source] += count;
+                }
             }
         }
         if (leftItems.Count == 0)
