@@ -1,7 +1,6 @@
-﻿using ExtraRando.ModInterop.ItemChangerInterop.Modules;
-using ItemChanger;
-using System;
+﻿using ItemChanger;
 using RandomizerCore.Logic;
+using System;
 
 namespace ExtraRando.Data.VictoryConditions;
 
@@ -33,7 +32,7 @@ internal class HallownestSealVictoryCondition : IVictoryCondition
         if (intName == nameof(PlayerData.trinket2))
         {
             CurrentAmount++;
-            ItemChangerMod.Modules.Get<VictoryModule>().CheckForFinish();
+            this.CheckForEnding();
         }
     }
 }

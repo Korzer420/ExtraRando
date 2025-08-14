@@ -1,6 +1,4 @@
-﻿using ExtraRando.ModInterop.ItemChangerInterop.Modules;
-using ItemChanger;
-using ItemChanger.Items;
+﻿using ItemChanger.Items;
 using RandomizerCore.Logic;
 using System;
 
@@ -40,7 +38,7 @@ public class DreamerVictoryCondition : IVictoryCondition
         if (intName == nameof(PlayerData.guardiansDefeated))
         {
             CurrentAmount++;
-            ItemChangerMod.Modules.Get<VictoryModule>().CheckForFinish();
+            this.CheckForEnding();
         }
     }
 }

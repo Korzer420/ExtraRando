@@ -1,9 +1,8 @@
-﻿using ExtraRando.ModInterop.ItemChangerInterop.Modules;
-using ItemChanger;
-using System.Collections.Generic;
-using System;
+﻿using ItemChanger;
 using RandomizerCore.Logic;
 using RandomizerCore.LogicItems;
+using System;
+using System.Collections.Generic;
 
 namespace ExtraRando.Data.VictoryConditions;
 
@@ -64,7 +63,7 @@ public class RelicVictoryCondition : IVictoryCondition
         if (intName.StartsWith("trinket"))
         {
             CurrentAmount++;
-            ItemChangerMod.Modules.Get<VictoryModule>().CheckForFinish();
+            this.CheckForEnding();
         }
     }
 }

@@ -1,5 +1,4 @@
 using ExtraRando.ModInterop.ItemChangerInterop;
-using ExtraRando.ModInterop.ItemChangerInterop.Modules;
 using ExtraRando.ModInterop.Randomizer;
 using ExtraRando.SaveManagement;
 using Modding;
@@ -16,15 +15,11 @@ public class ExtraRando : Mod, IGlobalSettings<GlobalSaveSettings>
 
     #region Properties
 
-    public override string GetVersion() => "0.10.0.0";
+    public override string GetVersion() => "0.10.1.0";
 
     public RandoSettings Settings { get; set; } = new();
 
     public static ExtraRando Instance { get; set; }
-
-    #endregion
-
-    #region Eventhandler
 
     #endregion
 

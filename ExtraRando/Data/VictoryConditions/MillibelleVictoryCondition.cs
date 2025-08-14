@@ -24,15 +24,9 @@ internal class MillibelleVictoryCondition : IVictoryCondition
 
     public string PrepareLogic(LogicManagerBuilder logicBuilder) => "Fungus3_35[right1]/ + Can_Replenish_Geo";
 
-    public void StartListening()
-    {
-        Events.AddFsmEdit(new("Banker", "Conversation Control"), PreventThievery);
-    }
+    public void StartListening() => Events.AddFsmEdit(new("Banker", "Conversation Control"), PreventThievery);
 
-    public void StopListening()
-    {
-        Events.RemoveFsmEdit(new("Banker", "Conversation Control"), PreventThievery);
-    }
+    public void StopListening() => Events.RemoveFsmEdit(new("Banker", "Conversation Control"), PreventThievery);
 
     private void PreventThievery(PlayMakerFSM fsm)
     {
@@ -42,7 +36,7 @@ internal class MillibelleVictoryCondition : IVictoryCondition
         fsm.GetState("Farewell").AddActions(() =>
         {
             CurrentAmount = PDHelper.BankerBalance;
-            ItemChangerMod.Modules.Get<VictoryModule>().CheckForFinish();
+            this.CheckForEnding();
         });
 
     }

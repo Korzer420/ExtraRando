@@ -1,11 +1,10 @@
-﻿using ItemChanger.Internal;
-using ItemChanger;
+﻿using ItemChanger;
+using ItemChanger.Internal;
+using KorzUtils.Helper;
+using Modding;
 using RandomizerCore.Logic;
 using System;
-using ExtraRando.ModInterop.ItemChangerInterop.Modules;
-using KorzUtils.Helper;
 using System.Linq;
-using Modding;
 
 namespace ExtraRando.Data.VictoryConditions;
 
@@ -43,7 +42,7 @@ public class RancidEggVictoryCondition : IVictoryCondition
             if (PDHelper.RancidEggs < orig)
             {
                 CurrentAmount += orig - PDHelper.RancidEggs;
-                ItemChangerMod.Modules.Get<VictoryModule>().CheckForFinish();
+                this.CheckForEnding();
             }
         return orig;
     }

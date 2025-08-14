@@ -1,7 +1,4 @@
-﻿using ExtraRando.ModInterop.ItemChangerInterop.Modules;
-using ItemChanger;
-using KorzUtils.Helper;
-using Modding;
+﻿using Modding;
 using RandomizerCore.Logic;
 using System;
 
@@ -45,14 +42,10 @@ internal class CharmVictoryCondition : IVictoryCondition
 
     private bool ModHooks_SetPlayerBoolHook(string name, bool orig)
     {
-        if (name.StartsWith("gotCharm_") && orig)
+        if (name.StartsWith("gotCharm_") && orig && !PlayerData.instance.GetBool(name))
         {
-            if (!PlayerData.instance.GetBool(name))
-            {
-                CurrentAmount++;
-                LogHelper.Write("Increase charm amount");
-                ItemChangerMod.Modules.Get<VictoryModule>().CheckForFinish();
-            }
+            CurrentAmount++;
+            this.CheckForEnding();
         }
         return orig;
     }

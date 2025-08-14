@@ -33,7 +33,7 @@ public class ArcaneEggVictoryCondition : IVictoryCondition
         if (intName == nameof(PlayerData.trinket4))
         {
             CurrentAmount++;
-            ItemChangerMod.Modules.Get<VictoryModule>().CheckForFinish();
+            this.CheckForEnding();
         }
     }
 }

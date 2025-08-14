@@ -41,7 +41,7 @@ internal class WhiteFragmentsVictoryCondition : IVictoryCondition
                 CurrentAmount = 1;
             else if (orig > 2)
                 CurrentAmount = orig - 1;
-            ItemChangerMod.Modules.Get<VictoryModule>().CheckForFinish();
+            this.CheckForEnding();
         }
         return orig;
     }

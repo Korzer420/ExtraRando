@@ -1,8 +1,6 @@
-﻿using ExtraRando.ModInterop.ItemChangerInterop.Modules;
-using ItemChanger.Internal;
-using ItemChanger;
-using System;
+﻿using ItemChanger;
 using RandomizerCore.Logic;
+using System;
 
 namespace ExtraRando.Data.VictoryConditions;
 
@@ -34,7 +32,7 @@ public class WanderersJournalVictoryCondition : IVictoryCondition
         if (intName == nameof(PlayerData.trinket1))
         {
             CurrentAmount++;
-            ItemChangerMod.Modules.Get<VictoryModule>().CheckForFinish();
+            this.CheckForEnding();
         }
     }
 }

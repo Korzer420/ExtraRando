@@ -1,7 +1,6 @@
 ﻿using ItemChanger;
-using System;
-using ExtraRando.ModInterop.ItemChangerInterop.Modules;
 using RandomizerCore.Logic;
+using System;
 
 namespace ExtraRando.Data.VictoryConditions;
 
@@ -33,7 +32,7 @@ internal class KingsIdolVictoryCondition : IVictoryCondition
         if (intName == nameof(PlayerData.trinket3))
         {
             CurrentAmount++;
-            ItemChangerMod.Modules.Get<VictoryModule>().CheckForFinish();
+            this.CheckForEnding();
         }
     }
 }

@@ -1,6 +1,4 @@
-﻿using ExtraRando.ModInterop.ItemChangerInterop.Modules;
-using ItemChanger;
-using ItemChanger.Items;
+﻿using ItemChanger.Items;
 using Modding;
 using RandomizerCore.Logic;
 using System;
@@ -34,7 +32,7 @@ public class EssenceVictoryCondition : IVictoryCondition
         if (name == nameof(PlayerData.dreamOrbs))
         {
             CurrentAmount = orig;
-            ItemChangerMod.Modules.Get<VictoryModule>().CheckForFinish();
+            this.CheckForEnding();
         }
         return orig;
     }
