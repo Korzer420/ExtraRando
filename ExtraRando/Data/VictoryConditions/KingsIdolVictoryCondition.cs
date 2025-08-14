@@ -1,8 +1,5 @@
-﻿using ItemChanger.Internal;
-using ItemChanger;
+﻿using ItemChanger;
 using System;
-using System.Collections.Generic;
-using RandomizerMod.Extensions;
 using ExtraRando.ModInterop.ItemChangerInterop.Modules;
 using RandomizerCore.Logic;
 
@@ -18,28 +15,7 @@ internal class KingsIdolVictoryCondition : IVictoryCondition
 
     public int ClampAvailableRange(int setAmount) => Math.Min(8, Math.Max(0, setAmount));
 
-    public string GetHintText()
-    {
-        Dictionary<string, int> leftItems = [];
-        foreach (AbstractItem item in Ref.Settings.GetItems())
-        {
-            if (item.IsObtained())
-                continue;
-            if (item.name == ItemNames.Kings_Idol)
-            {
-                string area = item.RandoLocation()?.LocationDef?.MapArea ?? "an unknown place.";
-                if (!leftItems.ContainsKey(area))
-                    leftItems.Add(area, 0);
-                leftItems[area]++;
-            }
-        }
-        if (leftItems.Count == 0)
-            return null;
-        string text = "The idols can be found at:";
-        foreach (string item in leftItems.Keys)
-            text += $"<br>{leftItems[item]} in {item}";
-        return text;
-    }
+    public string GetHintText() => this.GenerateHintText("The idols can be found at:", item => item.name == ItemNames.Kings_Idol);
 
     public string PrepareLogic(LogicManagerBuilder builder) => $"KINGSIDOLS>{RequiredAmount - 1}";
 

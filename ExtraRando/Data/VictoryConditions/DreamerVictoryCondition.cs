@@ -1,11 +1,8 @@
 ﻿using ExtraRando.ModInterop.ItemChangerInterop.Modules;
 using ItemChanger;
-using ItemChanger.Internal;
 using ItemChanger.Items;
 using RandomizerCore.Logic;
-using RandomizerMod.Extensions;
 using System;
-using System.Collections.Generic;
 
 namespace ExtraRando.Data.VictoryConditions;
 
@@ -29,29 +26,10 @@ public class DreamerVictoryCondition : IVictoryCondition
 
     public string GetHintText()
     {
-        if (RandomizerMod.RandomizerMod.RS.GenerationSettings.PoolSettings.Dreamers)
-        {
-            Dictionary<string, int> leftItems = [];
-            foreach (AbstractItem item in Ref.Settings.GetItems())
-            {
-                if (item.IsObtained())
-                    continue;
-                if (item is DreamerItem)
-                {
-                    string area = item.RandoLocation()?.LocationDef?.MapArea ?? "an unknown place.";
-                    if (!leftItems.ContainsKey(area))
-                        leftItems.Add(area, 0);
-                    leftItems[area]++;
-                }
-            }
-            if (leftItems.Count == 0)
-                return null;
-            string text = "The guardians watch at:";
-            foreach (string item in leftItems.Keys)
-                text += $"<br>{leftItems[item]} in {item}";
-            return text;
-        }
-        return null;
+        if (!RandomizerMod.RandomizerMod.RS.GenerationSettings.PoolSettings.Dreamers)
+            return null;
+
+        return this.GenerateHintText("The guardians watch at:", item => item is DreamerItem);
     }
 
     #endregion
