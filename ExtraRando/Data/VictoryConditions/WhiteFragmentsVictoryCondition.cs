@@ -1,10 +1,7 @@
-﻿using ItemChanger.Internal;
-using ItemChanger;
+﻿using ItemChanger;
 using RandomizerCore.Logic;
 using System;
 using System.Collections.Generic;
-using RandomizerMod.Extensions;
-using KorzUtils.Helper;
 using Modding;
 using ExtraRando.ModInterop.ItemChangerInterop.Modules;
 
@@ -18,29 +15,9 @@ internal class WhiteFragmentsVictoryCondition : IVictoryCondition
 
     public int ClampAvailableRange(int setAmount) => Math.Min(3, Math.Max(0, setAmount));
 
-    public string GetHintText()
-    {
-        Dictionary<string, int> leftItems = [];
-        foreach (AbstractItem item in Ref.Settings.GetItems())
-        {
-            if (item.IsObtained())
-                continue;
-            if (item.name == ItemNames.Queen_Fragment || item.name == ItemNames.King_Fragment
-                || item.name == ItemNames.Void_Heart)
-            {
-                string area = item.RandoLocation()?.LocationDef?.MapArea ?? "an unknown place.";
-                if (!leftItems.ContainsKey(area))
-                    leftItems.Add(area, 0);
-                leftItems[area]++;
-            }
-        }
-        if (leftItems.Count == 0)
-            return null;
-        string text = "The parts of the kings charm can be found at:";
-        foreach (string item in leftItems.Keys)
-            text += $"<br>{leftItems[item]} in {item}";
-        return text;
-    }
+    private static readonly HashSet<string> CHARM_ITEMS = [ItemNames.Queen_Fragment, ItemNames.King_Fragment, ItemNames.Void_Heart];
+
+    public string GetHintText() => this.GenerateHintText("The parts of the king's charm can be found at:", item => CHARM_ITEMS.Contains(item.name));
 
     public string GetMenuName() => "White Fragments";
 

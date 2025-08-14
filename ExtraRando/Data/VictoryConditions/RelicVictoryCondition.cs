@@ -1,9 +1,7 @@
 ﻿using ExtraRando.ModInterop.ItemChangerInterop.Modules;
-using ItemChanger.Internal;
 using ItemChanger;
 using System.Collections.Generic;
 using System;
-using RandomizerMod.Extensions;
 using RandomizerCore.Logic;
 using RandomizerCore.LogicItems;
 
@@ -19,29 +17,9 @@ public class RelicVictoryCondition : IVictoryCondition
 
     public int ClampAvailableRange(int setAmount) => Math.Min(43, Math.Max(0, setAmount));
 
-    public string GetHintText()
-    {
-        Dictionary<string, int> leftItems = [];
-        foreach (AbstractItem item in Ref.Settings.GetItems())
-        {
-            if (item.IsObtained())
-                continue;
-            if (item.name == ItemNames.Kings_Idol || item.name == ItemNames.Arcane_Egg
-                || item.name == ItemNames.Hallownest_Seal || item.name == ItemNames.Wanderers_Journal)
-            {
-                string area = item.RandoLocation()?.LocationDef?.MapArea ?? "an unknown place.";
-                if (!leftItems.ContainsKey(area))
-                    leftItems.Add(area, 0);
-                leftItems[area]++;
-            }
-        }
-        if (leftItems.Count == 0)
-            return null;
-        string text = "Bring me the relics you can find at:";
-        foreach (string item in leftItems.Keys)
-            text += $"<br>{leftItems[item]} in {item}";
-        return text;
-    }
+    private static readonly HashSet<string> RELIC_NAMES = [ItemNames.Wanderers_Journal, ItemNames.Hallownest_Seal, ItemNames.Kings_Idol, ItemNames.Arcane_Egg];
+
+    public string GetHintText() => this.GenerateHintText("Bring me the relics you can find at:", item => RELIC_NAMES.Contains(item.name));
 
     public string PrepareLogic(LogicManagerBuilder builder)
     {

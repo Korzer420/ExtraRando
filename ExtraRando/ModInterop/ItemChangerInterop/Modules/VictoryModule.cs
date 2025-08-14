@@ -109,7 +109,7 @@ public class VictoryModule : Module
         AvailableConditions.Add(new DreamerVictoryCondition());
         AvailableConditions.Add(new GrubsVictoryCondition());
         AvailableConditions.Add(new EssenceVictoryCondition());
-        AvailableConditions.Add(new WandererJournalVictoryCondition());
+        AvailableConditions.Add(new WanderersJournalVictoryCondition());
         AvailableConditions.Add(new HallownestSealVictoryCondition());
         AvailableConditions.Add(new KingsIdolVictoryCondition());
         AvailableConditions.Add(new ArcaneEggVictoryCondition());

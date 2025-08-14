@@ -1,5 +1,12 @@
 ﻿using ExtraRando.ModInterop.ItemChangerInterop.Modules;
+using ItemChanger;
+using ItemChanger.Internal;
 using RandomizerCore.Logic;
+using RandomizerMod.Extensions;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace ExtraRando.Data;
 
@@ -57,4 +64,49 @@ public interface IVictoryCondition
     /// <para/>This is called when the <see cref="VictoryModule"/> is unloaded.
     /// </summary>
     public void StopListening();
+}
+
+/// <summary>
+/// Helper methods for implementing IVictoryConditions.
+/// </summary>
+public static class IVictoryConditionHelpers
+{
+    /// <summary>
+    /// List all areas where missing items relevant to the victory condition may be found.
+    /// </summary>
+    /// <param name="self">The invoking victory condition.</param>
+    /// <param name="desc">The header to display before listing relevant areas.</param>
+    /// <param name="counter">Returns the total count towards the victory condition produced by this item.</param>
+    /// <returns>Suitable string for GetHintText().</returns>
+    public static string GenerateHintText(this IVictoryCondition self, string desc, Func<AbstractItem, int> counter)
+    {
+        Dictionary<string, int> leftItems = [];
+        foreach (AbstractItem item in Ref.Settings.GetItems())
+        {
+            if (item.IsObtained())
+                continue;
+
+            int count = counter(item);
+            if (count > 0)
+            {
+                string area = item.RandoLocation()?.LocationDef?.MapArea ?? "an unknown place.";
+                if (!leftItems.ContainsKey(area))
+                    leftItems.Add(area, 0);
+                leftItems[area] += count;
+            }
+        }
+        if (leftItems.Count == 0)
+            return null;
+
+        return string.Join("<br>", leftItems.OrderByDescending(e => e.Value).ThenBy(e => e.Key).Select(e => $"{e.Value} in {e.Key}").Prepend(desc));
+    }
+
+    /// <summary>
+    /// A simplified helper where matching items always count as 1 towards the victory condition.
+    /// </summary>
+    /// <param name="self">The invoking victory condition.</param>
+    /// <param name="desc">The header to display before listing relevant areas.</param>
+    /// <param name="filter">Returns true if the item contributes 1 towards the victory condition.</param>
+    /// <returns>Suitable string for GetHintText().</returns>
+    public static string GenerateHintText(this IVictoryCondition self, string desc, Func<AbstractItem, bool> filter) => self.GenerateHintText(desc, item => filter(item) ? 1 : 0);
 }
