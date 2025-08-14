@@ -958,7 +958,12 @@ public static class RandoInterop
             List<string> conditions = [];
             foreach (var usedCondition in ExtraRando.Instance.Settings.VictoryConditions.Where(x => x.Value > 0))
             {
-                IVictoryCondition condition = VictoryModule.AvailableConditions.First(x => x.GetType().Name == usedCondition.Key);
+                IVictoryCondition condition = VictoryModule.AvailableConditions.FirstOrDefault(x => string.Equals(x.GetType().Name, usedCondition.Key, System.StringComparison.InvariantCultureIgnoreCase));
+                if (condition == null)
+                {
+                    LogHelper.Write<ExtraRando>("Victory condition " + usedCondition.Key + " not found. Skip to next.", KorzUtils.Enums.LogType.Warning, false);
+                    continue;
+                }
                 condition.RequiredAmount = usedCondition.Value;
                 string logicClause = condition.PrepareLogic(builder);
                 conditions.Add($"({logicClause})");

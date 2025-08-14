@@ -133,7 +133,7 @@ internal class RandoMenu
             elements.Add(conditionField);
             _subPageLookup.Add(conditionName, conditionField);
         }
-        new GridItemPanel(_victoryPage, new(0, 0f), 5, 150, 300, true, [..elements]);
+        new GridItemPanel(_victoryPage, new(0, 0f), 6, 120, 300, true, [..elements]);
         resetButton.OnClick += () => 
         {
             foreach (IValueElement conditionField in elements)

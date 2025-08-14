@@ -1,4 +1,3 @@
-using ExtraRando.Data;
 using ExtraRando.Enums;
 using MenuChanger.Attributes;
 using System.Collections.Generic;
