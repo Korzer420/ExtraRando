@@ -1,6 +1,5 @@
 ﻿using ExtraRando.Data;
 using ExtraRando.Data.VictoryConditions;
-using ExtraRando.Enums;
 using GlobalEnums;
 using ItemChanger;
 using ItemChanger.Modules;
@@ -10,9 +9,7 @@ using Modding;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
-using static BossStatueCompletionStates;
 using UnityEngine.SceneManagement;
 
 namespace ExtraRando.ModInterop.ItemChangerInterop.Modules;
@@ -45,7 +42,7 @@ public class VictoryModule : Module
             condition.StartListening();
         On.HutongGames.PlayMaker.Actions.GetPlayerDataInt.OnEnter += CheckBlackEggCondition;
         Events.AddSceneChangeEdit("Room_temple", VictoryHints);
-        // Hint tablet at "Room_temple" 13.35f, 3.4
+        Events.AddLanguageEdit(new("INV_DESC_GODFINDER"), ShowProgress);
     }
 
     public override void Unload()
@@ -54,6 +51,7 @@ public class VictoryModule : Module
             condition.StopListening();
         On.HutongGames.PlayMaker.Actions.GetPlayerDataInt.OnEnter -= CheckBlackEggCondition;
         Events.RemoveSceneChangeEdit("Room_temple", VictoryHints);
+        Events.RemoveLanguageEdit(new("INV_DESC_GODFINDER"), ShowProgress);
     }
 
     public void CheckForFinish()
@@ -139,25 +137,45 @@ public class VictoryModule : Module
 
     #region Hint Handling
 
+    private int _hintPage = -1;
+
     private void VictoryHints(Scene scene)
     {
+        _hintPage = -1;
         GameObject tablet = TabletUtility.MakeNewTablet("Victory tablet", () =>
         {
             string hintText = null;
+            List<IVictoryCondition> leftConditions = [];
             foreach (var condition in ActiveConditions)
             {
                 if (condition.CurrentAmount >= condition.RequiredAmount)
                     continue;
-                string conditionHint = condition.GetHintText();
-                if (conditionHint == null)
-                    continue;
-                hintText += $"<page>{conditionHint}";
+                leftConditions.Add(condition);
             }
-            return hintText?.Substring("<page>".Length) ?? "This tablet is filled with indecipherable scribbles.";
+            _hintPage++;
+            if (_hintPage >= leftConditions.Count)
+                _hintPage = 0;
+            if (leftConditions.Count != 0)
+                hintText = leftConditions[_hintPage].GetHintText();
+
+            return hintText ?? "This tablet is filled with indecipherable scribbles.";
         });
         tablet.transform.localPosition = new(18f,3.7f, 1.92f);
         tablet.SetActive(true);
     }
 
     #endregion
+
+    private void ShowProgress(ref string value)
+    {
+        if (Triggered)
+            return;
+        value = "Victory conditions left:";
+        foreach (IVictoryCondition condition in ActiveConditions)
+        {
+            if (condition.CurrentAmount > condition.RequiredAmount)
+                continue;
+            value += $"\r\n{condition.GetMenuName()}: {condition.RequiredAmount - condition.CurrentAmount} left.";
+        }
+    }
 }
