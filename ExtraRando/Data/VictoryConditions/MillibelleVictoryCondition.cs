@@ -30,7 +30,7 @@ internal class MillibelleVictoryCondition : IVictoryCondition
 
     private void PreventThievery(PlayMakerFSM fsm)
     {
-        if (ItemChangerMod.Modules.Get<VictoryModule>().Triggered)
+        if (ItemChangerMod.Modules.Get<VictoryModule>().Triggered || RequiredAmount < CurrentAmount)
             return;
         fsm.GetState("Init").AdjustTransitions("Grimmchild?");
         fsm.GetState("Farewell").AddActions(() =>
